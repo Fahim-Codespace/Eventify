@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import EventifyNavbar from './components/Navbar';
 import Home from './pages/Home';
+import connect from './Server/connect';
 
 function About() {
   return (
