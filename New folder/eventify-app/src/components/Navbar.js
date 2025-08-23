@@ -49,7 +49,7 @@ function EventifyNavbar() {
     <Navbar bg="white" expand="md" className="eventify-navbar" style={{borderRadius: '32px', boxShadow: '0 4px 32px rgba(0,0,0,0.08)', margin: '32px auto 0 auto', maxWidth: '1100px', padding: '0.5rem 2.5rem'}}>
       <Container fluid>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
-          <img src="/logo192.png" alt="Eventify Logo" className="navbar-logo-img" style={{width: '48px', height: '48px', marginRight: '8px'}} />
+          <img src="/main_logo.png" alt="Eventify Logo" className="navbar-logo-img" style={{width: '48px', height: '48px', marginRight: '8px'}} />
           <span className="navbar-brand-text" style={{fontSize: '1.6rem', fontWeight: 700, color: '#222', letterSpacing: '1px'}}>Eventify</span>
         </Navbar.Brand>
         

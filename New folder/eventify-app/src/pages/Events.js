@@ -7,6 +7,7 @@ const initialEvents = [
     id: 1,
     title: "Tech Conference 2025",
     description: "A full-day event discussing the latest in tech innovations.",
+    about: "Join industry leaders and innovators to explore cutting-edge technologies shaping the future.",
     date: "2025-09-15",
     time: "10:00 AM - 6:00 PM",
     location: "Ahsanullah University Auditorium",
@@ -17,6 +18,7 @@ const initialEvents = [
     id: 2,
     title: "AI Workshop",
     description: "Hands-on session on AI and machine learning techniques.",
+    about: "Learn practical AI skills from experts in an interactive workshop environment.",
     date: "2025-10-10",
     time: "1:00 PM - 4:00 PM",
     location: "AUST Lab Room 3B",
@@ -27,6 +29,7 @@ const initialEvents = [
     id: 3,
     title: "Coding Marathon",
     description: "24-hour coding competition for all students.",
+    about: "Test your coding skills in a thrilling 24-hour hackathon with exciting prizes.",
     date: "2025-11-05",
     time: "9:00 AM - 9:00 AM",
     location: "AUST Main Hall",
@@ -39,6 +42,7 @@ const Events = ({ isAdmin = false }) => {
   const [events, setEvents] = useState(initialEvents);
   const [registeredEvents, setRegisteredEvents] = useState({});
   const [showRegistration, setShowRegistration] = useState(null);
+  const [showAbout, setShowAbout] = useState(null);
   const [showAddEvent, setShowAddEvent] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -50,6 +54,7 @@ const Events = ({ isAdmin = false }) => {
   const [newEvent, setNewEvent] = useState({
     title: "",
     description: "",
+    about: "",
     date: "",
     time: "",
     location: "",
@@ -86,7 +91,6 @@ const Events = ({ isAdmin = false }) => {
       )
     );
     setShowRegistration(null);
-    console.log("Form submitted:", formData);
   };
 
   const handleInputChange = (e) => {
@@ -107,6 +111,7 @@ const Events = ({ isAdmin = false }) => {
     setNewEvent({
       title: "",
       description: "",
+      about: "",
       date: "",
       time: "",
       location: "",
@@ -117,6 +122,7 @@ const Events = ({ isAdmin = false }) => {
 
   const closeModal = () => {
     setShowRegistration(null);
+    setShowAbout(null);
     setShowAddEvent(false);
   };
 
@@ -124,7 +130,7 @@ const Events = ({ isAdmin = false }) => {
     <Container className="events-page">
       <Row className="justify-content-center mb-4">
         <Col md={10}>
-          <div className="minimal-banner text-center p-3">
+          <div className="minimal-banner">
             <h1 className="banner-title">Upcoming Events</h1>
           </div>
         </Col>
@@ -158,7 +164,13 @@ const Events = ({ isAdmin = false }) => {
                     <p><i className="fas fa-user-friends me-2"></i> <span>Participants:</span> {event.participants}</p>
                   </Col>
                 </Row>
-                <div className="text-center mt-3">
+                <div className="text-center mt-3 d-flex justify-content-center gap-3">
+                  <Button
+                    className="about-btn"
+                    onClick={() => setShowAbout(event.id)}
+                  >
+                    About
+                  </Button>
                   <Button
                     className={`register-btn ${registeredEvents[event.id] ? "registered" : ""}`}
                     onClick={() => handleRegister(event.id)}
@@ -255,6 +267,29 @@ const Events = ({ isAdmin = false }) => {
         </Form>
       </Modal>
 
+      <Modal show={showAbout !== null} onHide={closeModal} centered>
+        <Modal.Header closeButton className="modal-header">
+          <Modal.Title>{events.find((e) => e.id === showAbout)?.title}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="neon-banner">
+            <h2 className="neon-title">{events.find((e) => e.id === showAbout)?.title}</h2>
+            <p className="neon-text">{events.find((e) => e.id === showAbout)?.about}</p>
+          </div>
+          <div className="text-center mt-4">
+            <Button
+              className="register-btn"
+              onClick={() => {
+                setShowAbout(null);
+                handleRegister(showAbout);
+              }}
+            >
+              Register Now
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+
       <Modal show={showAddEvent} onHide={closeModal} centered>
         <Modal.Header closeButton className="modal-header">
           <Modal.Title>Post New Event</Modal.Title>
@@ -281,6 +316,17 @@ const Events = ({ isAdmin = false }) => {
                 onChange={handleNewEventChange}
                 required
                 placeholder="Enter event description"
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>About</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="about"
+                value={newEvent.about}
+                onChange={handleNewEventChange}
+                required
+                placeholder="Enter about event"
               />
             </Form.Group>
             <Form.Group className="mb-3">
