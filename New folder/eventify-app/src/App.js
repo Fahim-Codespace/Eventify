@@ -1,10 +1,11 @@
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import EventifyNavbar from './components/Navbar';
 import Home from './pages/Home';
-import connect from './Server/connect';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
+// A placeholder component for the About page
 function About() {
   return (
     <div className="container py-5">
@@ -13,11 +14,13 @@ function About() {
     </div>
   );
 }
-function Signup() {
+
+// A placeholder component for the Events page
+function Events() {
   return (
     <div className="container py-5 text-center">
-      <h2>Signup Page</h2>
-      <p>Signup functionality coming soon!</p>
+      <h2>Events Page</h2>
+      <p>Events listings coming soon!</p>
     </div>
   );
 }
@@ -25,12 +28,14 @@ function Signup() {
 function App() {
   return (
     <Router>
-  <EventifyNavbar />
+      <EventifyNavbar />
       <div className="container mt-4">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
-          <Route path="/signup" element={<Signup />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/Signup" element={<Signup />} />
         </Routes>
       </div>
     </Router>
