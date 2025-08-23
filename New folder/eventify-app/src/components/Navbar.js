@@ -20,10 +20,10 @@ function EventifyNavbar() {
           <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'nav-link active' : 'nav-link'}>Home</Nav.Link>
           <Nav.Link as={Link} to="/about" className={location.pathname === '/about' ? 'nav-link active' : 'nav-link'}>About</Nav.Link>
           <Nav.Link as={Link} to="/events" className={location.pathname === '/events' ? 'nav-link active' : 'nav-link'}>Events</Nav.Link>
-          <Nav.Link as={Link} to="/login" className={location.pathname === '/login' ? 'nav-link active' : 'nav-link'}>Login</Nav.Link>
+          <Nav.Link as={Link} to="/Login" className={location.pathname === '/Login' ? 'nav-link active' : 'nav-link'}>Login</Nav.Link>
         </Nav>
         <Nav className="navbar-right">
-          <Button as={Link} to="/signup" variant="primary" className="navbar-signup-btn">Sign Up</Button>
+          <Button as={Link} to="/Signup" variant="primary" className="navbar-signup-btn">Sign Up</Button>
         </Nav>
       </Container>
     </Navbar>
