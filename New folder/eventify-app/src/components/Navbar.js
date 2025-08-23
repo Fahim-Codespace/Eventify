@@ -58,7 +58,7 @@ function EventifyNavbar() {
           <Nav className="mx-auto navbar-center" style={{gap: '40px'}}>
             <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'nav-link active' : 'nav-link'}>Home</Nav.Link>
             <Nav.Link as={Link} to="/about" className={location.pathname === '/about' ? 'nav-link active' : 'nav-link'}>About</Nav.Link>
-            <Nav.Link as={Link} to="/events" className={location.pathname === '/events' ? 'nav-link active' : 'nav-link'}>Events</Nav.Link>
+            <Nav.Link as={Link} to="/Events" className={location.pathname === '/Events' ? 'nav-link active' : 'nav-link'}>Events</Nav.Link>
           </Nav>
           
           <Nav className="navbar-right">
