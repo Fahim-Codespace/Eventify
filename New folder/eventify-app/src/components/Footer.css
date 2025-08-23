@@ -1,0 +1,11 @@
+.eventify-footer {
+  background: #f8f9fa;
+  color: #555;
+  font-size: 1rem;
+  border-top: 1px solid #eaeaea;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.04);
+  position: relative;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+}
