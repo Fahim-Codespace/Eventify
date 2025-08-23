@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const express = require('express');
+const mongoose = require('mongoose');
+const connectDB = require('./Backend/connect');
 root.render(
   <React.StrictMode>
     <App />
