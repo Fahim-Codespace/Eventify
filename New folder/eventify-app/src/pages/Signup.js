@@ -1,15 +1,23 @@
 import { useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import './Signup.css'; // We'll create this CSS file
+import axios from 'axios';
+import './Signup.css';
 
-export default function Register() {
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+export default function Signup() {
+  const [form, setForm] = useState({ 
+    name: '', 
+    email: '', 
+    password: '', 
+    role: 'student',
+    confirmPassword: '' 
+  });
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = e => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -17,26 +25,60 @@ export default function Register() {
     setMessage('');
     
     try {
-      const res = await axios.post('http://localhost:5000/api/register', form);
+      if (form.password !== form.confirmPassword) {
+        setMessage('Passwords do not match');
+        setIsLoading(false);
+        return;
+      }
+      
+      console.log('Sending registration request:', {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role
+      });
+      
+      const res = await axios.post('http://localhost:5000/api/register', {
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role
+      });
+      
+      console.log('Registration response:', res.data);
       setMessage(res.data.message);
-      // Redirect to login page after successful registration
+      
       setTimeout(() => {
-        navigate('/Login');
+        navigate('/login');
       }, 1500);
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Registration failed. Please try again.');
+      console.error('Registration error:', err);
+      console.error('Error response:', err.response);
+      
+      if (err.response) {
+        // The server responded with an error status
+        setMessage(err.response.data.error || 'Registration failed. Please try again.');
+      } else if (err.request) {
+        // The request was made but no response was received
+        setMessage('Cannot connect to the server. Please make sure your backend is running.');
+      } else {
+        // Something else happened
+        setMessage('Registration failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2>Create Your Account</h2>
-        <p className="register-subtitle">Join us to explore exciting events</p>
+    <div className="signup-container">
+      <div className="signup-card">
+        <div className="signup-logo">Eventify</div>
         
-        <form onSubmit={handleSubmit} className="register-form">
+        <h2 className="signup-title">Create Your Account</h2>
+        <p className="signup-subtitle">Join us to explore exciting events</p>
+        
+        <form onSubmit={handleSubmit} className="signup-form">
           <div className="form-group">
             <input 
               type="text" 
@@ -47,6 +89,23 @@ export default function Register() {
               required 
               className="form-input"
             />
+          </div>
+          
+          <div className="role-selector">
+            <button
+              type="button"
+              className={form.role === 'student' ? 'role-button active-role' : 'role-button'}
+              onClick={() => setForm({...form, role: 'student'})}
+            >
+              Student
+            </button>
+            <button
+              type="button"
+              className={form.role === 'admin' ? 'role-button active-role' : 'role-button'}
+              onClick={() => setForm({...form, role: 'admin'})}
+            >
+              Club Admin
+            </button>
           </div>
           
           <div className="form-group">
@@ -70,27 +129,40 @@ export default function Register() {
               onChange={handleChange} 
               required 
               className="form-input"
+              minLength="6"
+            />
+          </div>
+          
+          <div className="form-group">
+            <input 
+              type="password" 
+              name="confirmPassword" 
+              placeholder="Confirm Password" 
+              value={form.confirmPassword} 
+              onChange={handleChange} 
+              required 
+              className="form-input"
             />
           </div>
           
           <button 
             type="submit" 
-            className="register-button"
+            className="signup-button"
             disabled={isLoading}
           >
-            {isLoading ? 'Creating Account...' : 'Sign Up'}
+            {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
         
         {message && (
-          <div className={`message ${message.includes('success') ? 'success' : 'error'}`}>
+          <div className={message.includes('success') ? 'message message-success' : 'message message-error'}>
             {message}
           </div>
         )}
         
-        <p className="login-link">
-          Already have an account? <Link to="/Login">Log in here</Link>
-        </p>
+        <div className="signup-footer">
+          <p>Already have an account? <Link to="/login" className="signup-link">Log in</Link></p>
+        </div>
       </div>
     </div>
   );
