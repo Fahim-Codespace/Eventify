@@ -1,36 +1,35 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Home() {
-  return <h2>Home Page</h2>;
-}
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import EventifyNavbar from './components/Navbar';
+import Home from './pages/Home';
+
 function About() {
-  return <h2>About Page</h2>;
+  return (
+    <div className="container py-5">
+      <h2>About Eventify</h2>
+      <p>This platform is designed to make university club event management easy and efficient for both students and club admins.</p>
+    </div>
+  );
+}
+function Signup() {
+  return (
+    <div className="container py-5 text-center">
+      <h2>Signup Page</h2>
+      <p>Signup functionality coming soon!</p>
+    </div>
+  );
 }
 
 function App() {
   return (
     <Router>
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <div className="container-fluid">
-          <Link className="navbar-brand" to="/">Eventify</Link>
-          <div className="collapse navbar-collapse">
-            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-              <li className="nav-item">
-                <Link className="nav-link" to="/">Home</Link>
-              </li>
-              <li className="nav-item">
-                <Link className="nav-link" to="/about">About</Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+  <EventifyNavbar />
       <div className="container mt-4">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/signup" element={<Signup />} />
         </Routes>
       </div>
     </Router>
