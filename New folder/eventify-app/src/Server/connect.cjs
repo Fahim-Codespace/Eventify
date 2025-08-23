@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const { exec } = require('child_process');
 require('dotenv').config();
-
 // Import the User model
 const User = require('./models/User');
 
@@ -107,6 +107,113 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Root route
+app.get('/', (req, res) => {
+  res.send(`
+    <html>
+      <head>
+        <title>Student Portal API</title>
+        <style>
+          body { 
+            font-family: Arial, sans-serif; 
+            text-align: center; 
+            padding: 50px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+          }
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+          }
+          h1 { 
+            font-size: 2.5em; 
+            margin-bottom: 20px;
+            color: #fff;
+          }
+          p { 
+            font-size: 1.2em; 
+            margin: 15px 0;
+            line-height: 1.6;
+          }
+          .status { 
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+          }
+          .endpoints {
+            text-align: left;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+          }
+          .endpoint {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+          }
+          code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>🎓 Student Portal API</h1>
+          <p>Server is running successfully! 🚀</p>
+          
+          <div class="status">
+            <p>✅ <strong>MongoDB Status:</strong> Connected</p>
+            <p>🌐 <strong>Port:</strong> ${process.env.PORT || 5000}</p>
+            <p>🔄 <strong>Environment:</strong> ${process.env.NODE_ENV || 'development'}</p>
+          </div>
+
+          <div class="endpoints">
+            <h3>📋 Available Endpoints:</h3>
+            <div class="endpoint">
+              <strong>POST /api/register</strong> - Register a new user
+            </div>
+            <div class="endpoint">
+              <strong>POST /api/login</strong> - User login
+            </div>
+            <div class="endpoint">
+              <strong>GET /</strong> - This page (API status)
+            </div>
+          </div>
+
+          <p>Use Postman or curl to test the API endpoints</p>
+        </div>
+      </body>
+    </html>
+  `);
+});
+
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  
+  // Auto-open browser in development
+  if (process.env.NODE_ENV !== 'production') {
+    const openCommand = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+    exec(`${openCommand} http://localhost:${PORT}`, (error) => {
+      if (error) {
+        console.log('Could not auto-open browser. Please manually go to: http://localhost:5000');
+      } else {
+        console.log('Browser opened automatically!');
+      }
+    });
+  } else {
+    console.log(`Server ready at: http://localhost:${PORT}`);
+  }
+});
