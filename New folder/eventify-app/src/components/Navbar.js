@@ -5,6 +5,7 @@ import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Dashboard from '../pages/Dashboard';
 import './Navbar.css'; // We'll create this CSS file
 
 function EventifyNavbar() {
@@ -76,6 +77,7 @@ function EventifyNavbar() {
             <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'nav-link active' : 'nav-link'}>Home</Nav.Link>
             <Nav.Link as={Link} to="/about" className={location.pathname === '/about' ? 'nav-link active' : 'nav-link'}>About</Nav.Link>
             <Nav.Link as={Link} to="/Events" className={location.pathname === '/Events' ? 'nav-link active' : 'nav-link'}>Events</Nav.Link>
+            <Nav.Link as={Link} to="/dashboard" className={location.pathname === '/dashboard' ? 'nav-link active' : 'nav-link'}>Dashboard</Nav.Link>
           </Nav>
           <Nav className="navbar-right">
             {isLoggedIn ? (

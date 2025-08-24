@@ -4,8 +4,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Dummy authentication and user role
 const getUser = () => {
-  // Replace with real auth logic
-  return JSON.parse(localStorage.getItem('eventifyUser'));
+  // Use the same key as the rest of the app
+  return JSON.parse(localStorage.getItem('user'));
 };
 
 function Dashboard() {
