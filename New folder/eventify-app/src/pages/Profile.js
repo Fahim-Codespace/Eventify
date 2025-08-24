@@ -15,12 +15,14 @@ const Profile = () => {
     location: ''
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [userEvents, setUserEvents] = useState([]);
+  const [adminEvents, setAdminEvents] = useState([]);
+  const [activeTab, setActiveTab] = useState('profile');
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadUserProfile = async () => {
       try {
-        // Simulate API call to fetch user profile
         const userData = JSON.parse(localStorage.getItem('user'));
         const token = localStorage.getItem('token');
         
@@ -29,7 +31,7 @@ const Profile = () => {
           return;
         }
 
-        // In a real app, you would fetch profile data from your API
+        // Fetch user profile
         const profileResponse = await fetch('http://localhost:5000/api/profile', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -40,7 +42,7 @@ const Profile = () => {
           const profileData = await profileResponse.json();
           setUser(profileData.user);
           setFormData(profileData.profile || {
-            nickname: userData.name.split(' ')[0], // Default nickname
+            nickname: userData.name.split(' ')[0],
             university: '',
             clubName: '',
             bio: '',
@@ -48,8 +50,14 @@ const Profile = () => {
             website: '',
             location: ''
           });
+
+          // Load events based on user role
+          if (profileData.user.role === 'admin') {
+            await loadAdminEvents(token);
+          } else {
+            await loadUserEvents(token, profileData.user.id);
+          }
         } else {
-          // Fallback to basic user data
           setUser(userData);
           setFormData({
             nickname: userData.name.split(' ')[0],
@@ -78,6 +86,40 @@ const Profile = () => {
         }
       } finally {
         setLoading(false);
+      }
+    };
+
+    const loadUserEvents = async (token, userId) => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/users/${userId}/events`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const eventsData = await response.json();
+          setUserEvents(eventsData);
+        }
+      } catch (error) {
+        console.error('Error loading user events:', error);
+      }
+    };
+
+    const loadAdminEvents = async (token) => {
+      try {
+        const response = await fetch('http://localhost:5000/api/events/my-events', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (response.ok) {
+          const eventsData = await response.json();
+          setAdminEvents(eventsData);
+        }
+      } catch (error) {
+        console.error('Error loading admin events:', error);
       }
     };
 
@@ -110,7 +152,6 @@ const Profile = () => {
         const updatedProfile = await response.json();
         setFormData(updatedProfile.profile);
         setIsEditing(false);
-        // Show success message
         alert('Profile updated successfully!');
       } else {
         throw new Error('Failed to update profile');
@@ -124,9 +165,25 @@ const Profile = () => {
   };
 
   const handleCancelEdit = () => {
-    // Reset form data and exit edit mode
     setIsEditing(false);
-    // Reload original data (in a real app, you'd fetch from server)
+  };
+
+  const getEventRegistrants = async (eventId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/events/${eventId}/registrants`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const registrants = await response.json();
+        alert(`Registrants for this event: ${registrants.length} participants`);
+      }
+    } catch (error) {
+      console.error('Error fetching registrants:', error);
+    }
   };
 
   if (loading) {
@@ -145,10 +202,7 @@ const Profile = () => {
         <div className="profile-card">
           <div className="profile-content">
             <h2>Please log in to view your profile</h2>
-            <button 
-              className="btn-primary"
-              onClick={() => navigate('/login')}
-            >
+            <button className="btn-primary" onClick={() => navigate('/login')}>
               Login
             </button>
           </div>
@@ -176,173 +230,247 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* Profile Content */}
-        <div className="profile-content">
-          {/* Basic Information Section */}
-          <div className="profile-section">
-            <h2 className="section-title">Basic Information</h2>
-            <div className="form-grid">
-              <div className="form-group">
-                <label className="form-label">Full Name</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={user.name}
-                  disabled
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Email Address</label>
-                <input
-                  type="email"
-                  className="form-input"
-                  value={user.email}
-                  disabled
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Nickname</label>
-                <input
-                  type="text"
-                  name="nickname"
-                  className="form-input"
-                  value={formData.nickname}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  placeholder="Enter your preferred nickname"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">University</label>
-                <input
-                  type="text"
-                  name="university"
-                  className="form-input"
-                  value={formData.university}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  placeholder="Enter your university name"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Role-Specific Information */}
-          <div className={`profile-section ${user.role === 'admin' ? 'admin-features' : 'student-features'}`}>
-            <h2 className="section-title">
-              {user.role === 'admin' ? 'Club Administration' : 'Student Information'}
-            </h2>
-            
-            {user.role === 'admin' ? (
-              <div className="form-grid">
-                <div className="form-group">
-                  <label className="form-label">Club Name</label>
-                  <input
-                    type="text"
-                    name="clubName"
-                    className="form-input"
-                    value={formData.clubName}
-                    onChange={handleInputChange}
-                    disabled={!isEditing}
-                    placeholder="Enter your club name"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Club Website</label>
-                  <input
-                    type="url"
-                    name="website"
-                    className="form-input"
-                    value={formData.website}
-                    onChange={handleInputChange}
-                    disabled={!isEditing}
-                    placeholder="https://yourclub.com"
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="form-grid">
-                <div className="form-group">
-                  <label className="form-label">Student Bio</label>
-                  <textarea
-                    name="bio"
-                    className="form-input"
-                    value={formData.bio}
-                    onChange={handleInputChange}
-                    disabled={!isEditing}
-                    placeholder="Tell us about yourself..."
-                    rows="3"
-                    style={{resize: 'vertical'}}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">Interests</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    disabled={!isEditing}
-                    placeholder="Your interests and hobbies"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Contact Information */}
-          <div className="profile-section">
-            <h2 className="section-title">Contact Information</h2>
-            <div className="form-grid">
-              <div className="form-group">
-                <label className="form-label">Phone Number</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  className="form-input"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  placeholder="+1 (555) 123-4567"
-                />
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  className="form-input"
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  placeholder="City, Country"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="action-buttons">
-            {isEditing ? (
-              <>
-                <button className="btn-primary" onClick={handleSaveProfile}>
-                  Save Changes
-                </button>
-                <button className="btn-secondary" onClick={handleCancelEdit}>
-                  Cancel
-                </button>
-              </>
-            ) : (
-              <button className="btn-primary" onClick={() => setIsEditing(true)}>
-                Edit Profile
-              </button>
-            )}
-          </div>
+        {/* Navigation Tabs */}
+        <div className="profile-tabs">
+          <button 
+            className={activeTab === 'profile' ? 'tab-active' : 'tab-inactive'}
+            onClick={() => setActiveTab('profile')}
+          >
+            Profile
+          </button>
+          <button 
+            className={activeTab === 'events' ? 'tab-active' : 'tab-inactive'}
+            onClick={() => setActiveTab('events')}
+          >
+            {user.role === 'admin' ? 'My Events' : 'My Participations'}
+          </button>
         </div>
+
+        {/* Profile Content */}
+        {activeTab === 'profile' ? (
+          <div className="profile-content">
+            {/* Basic Information Section */}
+            <div className="profile-section">
+              <h2 className="section-title">Basic Information</h2>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label className="form-label">Full Name</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={user.name}
+                    disabled
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Email Address</label>
+                  <input
+                    type="email"
+                    className="form-input"
+                    value={user.email}
+                    disabled
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Nickname</label>
+                  <input
+                    type="text"
+                    name="nickname"
+                    className="form-input"
+                    value={formData.nickname}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    placeholder="Enter your preferred nickname"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">University</label>
+                  <input
+                    type="text"
+                    name="university"
+                    className="form-input"
+                    value={formData.university}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    placeholder="Enter your university name"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Role-Specific Information */}
+            <div className={`profile-section ${user.role === 'admin' ? 'admin-features' : 'student-features'}`}>
+              <h2 className="section-title">
+                {user.role === 'admin' ? 'Club Administration' : 'Student Information'}
+              </h2>
+              
+              {user.role === 'admin' ? (
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Club Name</label>
+                    <input
+                      type="text"
+                      name="clubName"
+                      className="form-input"
+                      value={formData.clubName}
+                      onChange={handleInputChange}
+                      disabled={!isEditing}
+                      placeholder="Enter your club name"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Club Website</label>
+                    <input
+                      type="url"
+                      name="website"
+                      className="form-input"
+                      value={formData.website}
+                      onChange={handleInputChange}
+                      disabled={!isEditing}
+                      placeholder="https://yourclub.com"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="form-grid">
+                  <div className="form-group">
+                    <label className="form-label">Student Bio</label>
+                    <textarea
+                      name="bio"
+                      className="form-input"
+                      value={formData.bio}
+                      onChange={handleInputChange}
+                      disabled={!isEditing}
+                      placeholder="Tell us about yourself..."
+                      rows="3"
+                      style={{resize: 'vertical'}}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="form-label">Interests</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      disabled={!isEditing}
+                      placeholder="Your interests and hobbies"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Contact Information */}
+            <div className="profile-section">
+              <h2 className="section-title">Contact Information</h2>
+              <div className="form-grid">
+                <div className="form-group">
+                  <label className="form-label">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    className="form-input"
+                    value={formData.phone}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    placeholder="+880 1234567890"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Location</label>
+                  <input
+                    type="text"
+                    name="location"
+                    className="form-input"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    placeholder="City, Country"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="action-buttons">
+              {isEditing ? (
+                <>
+                  <button className="btn-primary" onClick={handleSaveProfile}>
+                    Save Changes
+                  </button>
+                  <button className="btn-secondary" onClick={handleCancelEdit}>
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button className="btn-primary" onClick={() => setIsEditing(true)}>
+                  Edit Profile
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Events Tab Content */
+          <div className="profile-content">
+            <div className="profile-section">
+              <h2 className="section-title">
+                {user.role === 'admin' ? 'Events I Created' : 'Events I Participated In'}
+              </h2>
+              
+              {user.role === 'admin' ? (
+                <div className="events-grid">
+                  {adminEvents.length > 0 ? (
+                    adminEvents.map(event => (
+                      <div key={event._id} className="event-card">
+                        <h3>{event.title}</h3>
+                        <p>{event.description}</p>
+                        <div className="event-stats">
+                          <span>📅 {new Date(event.date).toLocaleDateString()}</span>
+                          <span>👥 {event.registrantsCount || 0} participants</span>
+                        </div>
+                        <button 
+                          className="btn-secondary"
+                          onClick={() => getEventRegistrants(event._id)}
+                        >
+                          View Registrants
+                        </button>
+                      </div>
+                    ))
+                  ) : (
+                    <p>You haven't created any events yet.</p>
+                  )}
+                </div>
+              ) : (
+                <div className="events-grid">
+                  {userEvents.length > 0 ? (
+                    <>
+                      <div className="participation-stats">
+                        <h3>Total Events Participated: {userEvents.length}</h3>
+                      </div>
+                      {userEvents.map(event => (
+                        <div key={event._id} className="event-card">
+                          <h3>{event.title}</h3>
+                          <p>{event.description}</p>
+                          <div className="event-stats">
+                            <span>📅 {new Date(event.date).toLocaleDateString()}</span>
+                            <span>📍 {event.location}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  ) : (
+                    <p>You haven't participated in any events yet.</p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
