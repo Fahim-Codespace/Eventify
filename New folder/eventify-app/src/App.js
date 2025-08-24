@@ -8,7 +8,7 @@ import Signup from './pages/Signup';
 import Events from './pages/Events';
 import CertificateGenerator from './pages/CertificateGenerator';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import Profile from './pages/Profile';
 function About() {
   return (
     <div className="container py-5">
@@ -30,6 +30,7 @@ function App() {
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Events" element={<Events />} />
           <Route path="/certificate" element={<CertificateGenerator />} />
+          <Route path="/Profile" element={<Profile />} />
         </Routes>
       </div>
     </Router>
