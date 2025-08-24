@@ -36,7 +36,7 @@ export default function Login() {
       // Redirect based on role
       setTimeout(() => {
         if (res.data.user.role === 'admin') {
-          navigate('/admin/dashboard');
+          navigate('/dashboard');
         } else {
           navigate('/dashboard');
         }

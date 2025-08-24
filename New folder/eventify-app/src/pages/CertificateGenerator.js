@@ -58,7 +58,7 @@ function CertificateGenerator() {
 
   return (
     <div className="container py-5 text-center">
-      <h2 className="mb-4">Automatic Certificate Generator</h2>
+      <h2 className="mb-4">Your certificate is ready!</h2>
       <p>Click the button below to download your certificate of participation for the event.</p>
       <button className="btn btn-primary px-4 py-2" onClick={generateCertificate}>
         Download Certificate
