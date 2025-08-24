@@ -8,10 +8,14 @@ require('dotenv').config();
 
 // Import the models
 const User = require('./models/User');
-const Profile = require('./models/Profile'); // Add this line
+const Profile = require('./models/Profile'); 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://eventify-lac-chi.vercel.app", // frontend URL
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Connect to MongoDB
@@ -300,12 +304,12 @@ app.listen(PORT, () => {
     const openCommand = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
     exec(`${openCommand} http://localhost:${PORT}`, (error) => {
       if (error) {
-        console.log('Could not auto-open browser. Please manually go to: http://localhost:5000');
+        console.log('Could not auto-open browser. Please manually go to: https://eventify-lac-chi.vercel.app/');
       } else {
         console.log('Browser opened automatically!');
       }
     });
   } else {
-    console.log(`Server ready at: http://localhost:${PORT}`);
+    console.log(`Server ready at: https://eventify-lac-chi.vercel.app/`);
   }
 });
