@@ -1,4 +1,5 @@
 Web site Link: https://eventify-application.vercel.app/
+
 Eventify 🎉 - University Event Management
 
 Welcome to Eventify, a sleek and minimalistic event management platform built for our university hackathon! We're crafting a MERN-stack solution to streamline event organization and participation, featuring authentication, participant certification generation, and distinct interfaces for club admins and students.
