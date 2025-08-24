@@ -1,19 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-function Events() {
-  return (
-    <div className="container py-5">
-      <h2 className="mb-4">Events</h2>
-      <p>Browse and manage all your events here.</p>
-    </div>
-  );
-}
-
-export default Events;
-=======
-
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Button, Modal, Form } from "react-bootstrap";
 import "./Events.css";
@@ -193,6 +177,18 @@ const Events = ({ isAdmin = false }) => {
                   >
                     {registeredEvents[event.id] ? "Leave" : "Join"}
                   </Button>
+                  {registeredEvents[event.id] && (
+                    <Button
+                      className="btn btn-success"
+                      onClick={() => {
+                        localStorage.setItem('certificateEvent', JSON.stringify(event));
+                        localStorage.setItem('certificateUser', JSON.stringify(formData));
+                        window.location.href = '/certificate';
+                      }}
+                    >
+                      Get Certificate
+                    </Button>
+                  )}
                 </div>
               </Card.Body>
             </Card>

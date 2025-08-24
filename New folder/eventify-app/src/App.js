@@ -1,14 +1,15 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import EventifyNavbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
-import Signup from './pages/Signup'; // Import the correct Signup component
+import Signup from './pages/Signup';
 import Events from './pages/Events';
+import CertificateGenerator from './pages/CertificateGenerator';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function About() {
-  // Keep this component or import a separate About page if you've created one
   return (
     <div className="container py-5">
       <h2>About Eventify</h2>
@@ -28,6 +29,7 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Events" element={<Events />} />
+          <Route path="/certificate" element={<CertificateGenerator />} />
         </Routes>
       </div>
     </Router>
