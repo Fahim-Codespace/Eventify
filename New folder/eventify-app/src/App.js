@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup'; // Import the correct Signup component
 import Events from './pages/Events';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import Profile from './pages/Profile';
 function About() {
   // Keep this component or import a separate About page if you've created one
   return (
@@ -28,6 +28,7 @@ function App() {
           <Route path="/Login" element={<Login />} />
           <Route path="/Signup" element={<Signup />} />
           <Route path="/Events" element={<Events />} />
+          <Route path="/Profile" element={<Profile />} />
         </Routes>
       </div>
     </Router>
