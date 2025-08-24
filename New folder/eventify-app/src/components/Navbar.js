@@ -67,72 +67,63 @@ function EventifyNavbar() {
     <Navbar bg="white" expand="md" className="eventify-navbar">
       <Container fluid>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
-          <img 
-            src="/main_logo.png" 
-            alt="Eventify Logo" 
-            className="navbar-logo-img" 
-          />
+          <img src="/main_logo.png" alt="Eventify Logo" className="navbar-logo-img" />
           <span className="navbar-brand-text">Eventify</span>
         </Navbar.Brand>
-        
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="mx-auto navbar-center">
-            <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'nav-link active' : 'nav-link'}>
-              Home
-            </Nav.Link>
-            <Nav.Link as={Link} to="/about" className={location.pathname === '/about' ? 'nav-link active' : 'nav-link'}>
-              About
-            </Nav.Link>
-            <Nav.Link as={Link} to="/events" className={location.pathname === '/events' ? 'nav-link active' : 'nav-link'}>
-              Events
-            </Nav.Link>
+          <Nav className="mx-auto navbar-center" style={{gap: '40px'}}>
+            <Nav.Link as={Link} to="/" className={location.pathname === '/' ? 'nav-link active' : 'nav-link'}>Home</Nav.Link>
+            <Nav.Link as={Link} to="/about" className={location.pathname === '/about' ? 'nav-link active' : 'nav-link'}>About</Nav.Link>
+            <Nav.Link as={Link} to="/Events" className={location.pathname === '/Events' ? 'nav-link active' : 'nav-link'}>Events</Nav.Link>
           </Nav>
-          
           <Nav className="navbar-right">
             {isLoggedIn ? (
-              // User is logged in - show profile dropdown
               <Dropdown align="end">
-                <Dropdown.Toggle 
-                  variant="outline-primary" 
-                  id="dropdown-basic" 
-                  className="user-dropdown-toggle"
+                <Dropdown.Toggle
+                  variant="outline-primary"
+                  id="dropdown-basic"
+                  style={{
+                    border: 'none',
+                    backgroundColor: 'transparent',
+                    color: '#495057',
+                    fontWeight: '500',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
                 >
-                  <div className="user-info-container">
-                    <span className="user-name">{user?.name}</span>
-                
-                  </div>
+                  <span style={{
+                    background: user?.role === 'admin' ? '#d4edda' : '#d1ecf1',
+                    color: user?.role === 'admin' ? '#155724' : '#0c5460',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    fontSize: '12px'
+                  }}>
+                    👋 {user?.name}
+                  </span>
                 </Dropdown.Toggle>
-
-                <Dropdown.Menu className="user-dropdown-menu">
-                  <Dropdown.Item as={Link} to="/profile" className="dropdown-item">
-                    <i className="bi bi-person"></i> My Profile
-                  </Dropdown.Item>
-                  <Dropdown.Item as={Link} to="/my-events" className="dropdown-item">
-                    <i className="bi bi-calendar-event"></i> My Events
-                  </Dropdown.Item>
+                <Dropdown.Menu>
+                  <Dropdown.Item as={Link} to="/profile">👤 My Profile</Dropdown.Item>
+                  <Dropdown.Item as={Link} to="/my-events">📅 My Events</Dropdown.Item>
                   {user?.role === 'admin' && (
-                    <Dropdown.Item as={Link} to="/admin" className="dropdown-item">
-                      <i className="bi bi-speedometer2"></i> Admin Panel
-                    </Dropdown.Item>
+                    <Dropdown.Item as={Link} to="/admin">⚙️ Admin Panel</Dropdown.Item>
                   )}
                   <Dropdown.Divider />
-                  <Dropdown.Item onClick={handleLogout} className="dropdown-item logout-item">
-                    <i className="bi bi-box-arrow-right"></i> Logout
-                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleLogout} style={{color: '#dc3545'}}>🚪 Logout</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             ) : (
-              // User is not logged in - show login/signup buttons
-              <div className="auth-buttons-container">
-                <Nav.Link 
-                  as={Link} 
-                  to="/login" 
+              <div className="d-flex align-items-center" style={{gap: '16px'}}>
+                <Nav.Link
+                  as={Link}
+                  to="/login"
                   className={location.pathname === '/login' ? 'nav-link active' : 'nav-link'}
+                  style={{fontWeight: '500', color: '#6c757d'}}
                 >
                   Login
                 </Nav.Link>
-                <Button as={Link} to="/signup" variant="primary" className="navbar-signup-btn">
+                <Button as={Link} to="/signup" variant="primary" className="navbar-signup-btn" style={{borderRadius: '12px', padding: '8px 20px'}}>
                   Sign Up
                 </Button>
               </div>

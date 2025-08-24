@@ -177,6 +177,18 @@ const Events = ({ isAdmin = false }) => {
                   >
                     {registeredEvents[event.id] ? "Leave" : "Join"}
                   </Button>
+                  {registeredEvents[event.id] && (
+                    <Button
+                      className="btn btn-success"
+                      onClick={() => {
+                        localStorage.setItem('certificateEvent', JSON.stringify(event));
+                        localStorage.setItem('certificateUser', JSON.stringify(formData));
+                        window.location.href = '/certificate';
+                      }}
+                    >
+                      Get Certificate
+                    </Button>
+                  )}
                 </div>
               </Card.Body>
             </Card>
@@ -388,3 +400,4 @@ const Events = ({ isAdmin = false }) => {
 };
 
 export default Events;
+
