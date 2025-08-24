@@ -92,7 +92,8 @@ const Profile = () => {
 
     const loadUserEvents = async (token, userId) => {
       try {
-  const response = await fetch(`${apiUrl}/api/users/${userId}/events`, {
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const response = await fetch(`${apiUrl}/api/users/${userId}/events`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -109,7 +110,8 @@ const Profile = () => {
 
     const loadAdminEvents = async (token) => {
       try {
-  const response = await fetch(`${apiUrl}/api/events/my-events`, {
+        const apiUrl = process.env.REACT_APP_API_URL;
+        const response = await fetch(`${apiUrl}/api/events/my-events`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -178,6 +180,7 @@ const Profile = () => {
   const getEventRegistrants = async (eventId) => {
     try {
       const token = localStorage.getItem('token');
+  const apiUrl = process.env.REACT_APP_API_URL;
   const response = await fetch(`${apiUrl}/api/events/${eventId}/registrants`, {
         headers: {
           'Authorization': `Bearer ${token}`
