@@ -15,7 +15,8 @@ function CertificateAdmin() {
   const fetchApplications = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:5000/api/certificate/applications');
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const res = await axios.get(`${apiUrl}/api/certificate/applications`);
       setApplications(res.data);
     } catch (err) {
       setError('Failed to fetch applications');
@@ -25,7 +26,7 @@ function CertificateAdmin() {
 
   const approveApplication = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/certificate/approve/${id}`);
+  await axios.put(`${apiUrl}/api/certificate/approve/${id}`);
       fetchApplications();
     } catch (err) {
       setError('Failed to approve application');

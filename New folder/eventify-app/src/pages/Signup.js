@@ -38,7 +38,8 @@ export default function Signup() {
         role: form.role
       });
       
-      const res = await axios.post('http://localhost:5000/api/register', {
+  const apiUrl = process.env.REACT_APP_API_URL;
+  const res = await axios.post(`${apiUrl}/api/register`, {
         name: form.name,
         email: form.email,
         password: form.password,
