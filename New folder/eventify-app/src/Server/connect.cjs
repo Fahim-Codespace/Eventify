@@ -5,8 +5,10 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const { exec } = require('child_process');
 require('dotenv').config();
-// Import the User model
+
+// Import the models
 const User = require('./models/User');
+const Profile = require('./models/Profile'); // Add this line
 
 const app = express();
 app.use(cors());
@@ -16,6 +18,24 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(err => console.log('MongoDB connection error:', err));
+
+// Authentication middleware
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
+    req.user = user;
+    next();
+  });
+}
 
 // Registration endpoint
 app.post('/api/register', async (req, res) => {
@@ -107,6 +127,72 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// GET Profile endpoint
+app.get('/api/profile', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    const profile = await Profile.findOne({ userId: req.user.id });
+    
+    res.json({ 
+      user,
+      profile: profile || {
+        nickname: user.name.split(' ')[0],
+        university: '',
+        clubName: '',
+        bio: '',
+        phone: '',
+        website: '',
+        location: ''
+      }
+    });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// PUT Profile endpoint (Update)
+app.put('/api/profile', authenticateToken, async (req, res) => {
+  try {
+    const { nickname, university, clubName, bio, phone, website, location } = req.body;
+    
+    // Find or create profile
+    let profile = await Profile.findOne({ userId: req.user.id });
+    
+    if (!profile) {
+      profile = new Profile({
+        userId: req.user.id,
+        nickname,
+        university,
+        clubName,
+        bio,
+        phone,
+        website,
+        location
+      });
+    } else {
+      // Update existing profile
+      profile.nickname = nickname || profile.nickname;
+      profile.university = university || profile.university;
+      profile.clubName = clubName || profile.clubName;
+      profile.bio = bio || profile.bio;
+      profile.phone = phone || profile.phone;
+      profile.website = website || profile.website;
+      profile.location = location || profile.location;
+    }
+    
+    await profile.save();
+    
+    res.json({ 
+      message: 'Profile updated successfully',
+      profile 
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Root route
 app.get('/', (req, res) => {
   res.send(`
@@ -185,6 +271,12 @@ app.get('/', (req, res) => {
             </div>
             <div class="endpoint">
               <strong>POST /api/login</strong> - User login
+            </div>
+            <div class="endpoint">
+              <strong>GET /api/profile</strong> - Get user profile
+            </div>
+            <div class="endpoint">
+              <strong>PUT /api/profile</strong> - Update user profile
             </div>
             <div class="endpoint">
               <strong>GET /</strong> - This page (API status)

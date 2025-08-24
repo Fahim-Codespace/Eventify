@@ -134,36 +134,41 @@ const Profile = () => {
   };
 
   const handleSaveProfile = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
+  
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch('http://localhost:5000/api/profile', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(formData)
+    });
+
+    console.log('Response status:', response.status);
     
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:5000/api/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (response.ok) {
-        const updatedProfile = await response.json();
-        setFormData(updatedProfile.profile);
-        setIsEditing(false);
-        alert('Profile updated successfully!');
-      } else {
-        throw new Error('Failed to update profile');
-      }
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Error updating profile. Please try again.');
-    } finally {
-      setLoading(false);
+    if (response.ok) {
+      const updatedProfile = await response.json();
+      console.log('Profile updated successfully:', updatedProfile);
+      setFormData(updatedProfile.profile);
+      setIsEditing(false);
+      alert('Profile updated successfully!');
+    } else {
+      // Get the error message from the response
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Server error response:', errorData);
+      throw new Error(errorData.error || `Failed to update profile. Status: ${response.status}`);
     }
-  };
-
+  } catch (error) {
+    console.error('Error saving profile:', error);
+    alert(`Error updating profile: ${error.message}. Please check the console for details.`);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleCancelEdit = () => {
     setIsEditing(false);
   };

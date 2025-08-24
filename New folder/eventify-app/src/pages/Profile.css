@@ -67,7 +67,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-size: 1rem;
-  color: #6c757d;
+  color: #00070c;
   position: relative;
 }
 
@@ -104,7 +104,7 @@
 .section-title {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #0e141f;
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
   border-bottom: 2px solid #e2e8f0;
@@ -135,7 +135,7 @@
 .form-label {
   display: block;
   font-weight: 600;
-  color: #4a5568;
+  color: #000000;
   margin-bottom: 0.75rem;
   font-size: 1rem;
 }
@@ -161,7 +161,7 @@
 
 .form-input:disabled {
   background: #edf2f7;
-  color: #a0aec0;
+  color: #011f46;
   cursor: not-allowed;
 }
 
