@@ -1,0 +1,14 @@
+{
+  "builds": [
+    {
+      "src": "eventify-app/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "eventify-app/build"
+      }
+    }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "/eventify-app/$1" }
+  ]
+}
